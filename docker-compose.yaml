@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  redis_container:
+    image: redis/redis-stack-server:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - /data/data
+    restart: always
+  web:
+    build:
+      context: ./
+    ports:
+      - "8080:8080"
+    restart: always
+
+
+
