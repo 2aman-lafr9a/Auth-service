@@ -17,6 +17,7 @@ bcrypt = "0.15.0"
 regex = "1.10.2"
 jsonwebtoken = "9.2.0"
 serde = { version = "1.0.193", features = ["derive"] }
+tonic-reflection = "0.10.2"
 
 
 

@@ -1,1 +1,1 @@
-DROP TABLE Users;
+DROP TABLE users;

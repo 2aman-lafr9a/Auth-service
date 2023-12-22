@@ -1,4 +1,5 @@
 use diesel::prelude::*;
+use diesel::result::Error;
 use crate::schema::users::dsl::users;
 use crate::schema::users::{password_hash, role, username};
 
@@ -21,7 +22,7 @@ impl User {
             .execute(conn)
     }
 
-    pub fn find_user_by_username(conn: &mut MysqlConnection, target_username: &str) -> QueryResult<Option<User>> {
+    pub fn find_user_by_username(conn: &mut MysqlConnection, target_username: &str) -> Result<Option<User>, Error> {
         users.filter(username.eq(target_username))
             .first(conn)
             .optional()
