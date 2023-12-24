@@ -17,15 +17,33 @@ pub(crate) fn is_valid_password(password: &str) -> bool {
 }
 
 
-// pub fn sanitize_input(input: String) -> String {
-//     let re = Regex::new(r"[^a-zA-Z0-9]").unwrap();
-//     let sanitized_input = re.replace_all(input.to_owned().as_str(), "").to_string();
-//     sanitized_input
-// }
-
 // Define the struct for the claims
 #[derive(Debug, Serialize)]
 pub(crate) struct Claims {
     pub(crate) username: String,
     pub(crate) role: String,
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_is_valid_user_role() {
+        assert!(is_valid_user_role("team_manager"));
+        assert!(is_valid_user_role("insurance"));
+        assert!(!is_valid_user_role("invalid_role"));
+    }
+
+    #[test]
+    fn test_is_valid_username() {
+        assert!(is_valid_username("validuser"));
+        assert!(!is_valid_username("ali"));
+    }
+
+    #[test]
+    fn test_is_valid_password() {
+        assert!(is_valid_password("validpassword"));
+        assert!(!is_valid_password("123"));
+    }
 }

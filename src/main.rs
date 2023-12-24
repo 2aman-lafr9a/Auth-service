@@ -7,6 +7,7 @@ use tonic::{Request, Response, Status, transport::Server};
 use authentication::{authentication_server::{Authentication, AuthenticationServer}, SignInRequest, SignInResponse, SignUpRequest, SignUpResponse};
 use database::redis_connection::redis_connect;
 
+
 mod database;
 mod models;
 mod schema;
@@ -20,16 +21,18 @@ pub mod authentication {
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    dotenv().ok();
 
-    let address = "127.0.0.1:8080".parse().unwrap();
+    let port = env::var("PORT").unwrap_or_else(|_| String::from("3000"));
+    let address = format!("127.0.0.1:{}", port).parse().unwrap();
     let authentication_service = AuthenticationService::default();
 
+    println!("Server listening on {}", address);
     Server::builder()
         .add_service(AuthenticationServer::new(authentication_service))
         .serve(address)
         .await?;
 
-    println!("Server listening on {}", address);
 
     Ok(())
 }
@@ -223,8 +226,4 @@ impl AuthenticationService {
         Ok(Response::new(response))
     }
 }
-
-// todo imp singleton pattern in connection
-//  todo right test
-
 
