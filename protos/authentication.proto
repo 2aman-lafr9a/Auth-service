@@ -11,8 +11,7 @@ service Authentication {
 message SignUpRequest {
   string username = 1;
   string password = 2;
-  string email = 3;
-  string role = 4;
+  string role = 3;
 }
 
 

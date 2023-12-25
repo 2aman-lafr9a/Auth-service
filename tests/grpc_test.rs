@@ -8,7 +8,7 @@ mod tests {
     #[cfg(test)]
     mod tests {
         use std::env;
-        use fake::faker::internet::en::{Password, SafeEmail, Username};
+        use fake::faker::internet::en::{Password, Username};
         use crate::authentication::{SignUpRequest};
         use crate::authentication::authentication_client::AuthenticationClient;
 
@@ -36,7 +36,6 @@ mod tests {
                 SignUpRequest {
                     username: Username().into(),
                     password: Password(8..20).into(),
-                    email: SafeEmail().into(),
                     role: String::from("team_manager"),
                 },
             );
