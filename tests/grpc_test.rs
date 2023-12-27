@@ -15,7 +15,7 @@ mod tests {
         #[tokio::test]
         async fn sign_up() {
             let port = env::var("PORT").unwrap_or_else(|_| String::from("3000"));
-            let address = format!("127.0.0.1:{}", port).parse().unwrap();
+            let address = format!("localhost:{}", port).parse().unwrap();
             // creating a channel ie connection to server
             let channel = tonic::transport::Channel::from_static(address)
                 .connect()

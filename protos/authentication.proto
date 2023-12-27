@@ -1,10 +1,29 @@
 syntax = "proto3";
+
+
 package authentication;
+
+option java_package = "org.example.authentication";
+option java_outer_classname = "AuthenticationProto";
+
+
 
 
 service Authentication {
   rpc SignUp(SignUpRequest) returns (SignUpResponse);
   rpc SignIn(SignInRequest) returns (SignInResponse);
+  rpc validateToken(TokenValidationRequest) returns (TokenValidationResponse);
+}
+
+message TokenValidationRequest {
+  string jwt = 1;
+}
+
+message TokenValidationResponse {
+  bool success = 1;
+  string message = 2;
+  string username = 3;
+  string role = 4;
 }
 
 

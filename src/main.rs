@@ -1,11 +1,12 @@
 use std::env;
 use bcrypt::{DEFAULT_COST, hash};
 use dotenv::dotenv;
-use jsonwebtoken::{Algorithm, encode, EncodingKey, Header};
+use jsonwebtoken::{Algorithm, DecodingKey, encode, EncodingKey, Header};
 use redis::{Commands, RedisResult};
 use tonic::{Request, Response, Status, transport::Server};
 use authentication::{authentication_server::{Authentication, AuthenticationServer}, SignInRequest, SignInResponse, SignUpRequest, SignUpResponse};
 use database::redis_connection::redis_connect;
+use crate::authentication::{TokenValidationRequest, TokenValidationResponse};
 
 
 mod database;
@@ -202,6 +203,32 @@ impl Authentication for AuthenticationService {
                 }
             }
         }
+    }
+    async fn validate_token(&self, request: Request<TokenValidationRequest>) -> Result<Response<TokenValidationResponse>, Status> {
+        // get the user from the request
+        let user = request.into_inner();
+
+        // get the username and password from the request
+        let jwt = user.jwt;
+
+        // Define the secret key
+        dotenv().ok();
+        let secret_key = env::var("JWT_SECRET_KEY").expect("JWT_SECRET_KEY must be set");
+
+        // Decode the JWT
+        let token_data = match jsonwebtoken::decode::<helpers::Claims>(&jwt, &DecodingKey::from_secret(secret_key.as_ref()), &jsonwebtoken::Validation::default()) {
+            Ok(token_data) => token_data,
+            Err(_) => return Err(Status::unauthenticated("Invalid JWT"))
+        };
+
+        // return a success response
+        let response = TokenValidationResponse {
+            success: true,
+            message: "JWT is valid".into(),
+            username: token_data.claims.username,
+            role: token_data.claims.role,
+        };
+        Ok(Response::new(response))
     }
 }
 
