@@ -1,12 +1,9 @@
 pipeline {
   agent {
-    dockerfile {
-      filename 'auth_service'
-    }
 
   }
   stages {
-    stage('error') {
+    stage('build') {
       steps {
         sh 'docker compose up -d'
       }
