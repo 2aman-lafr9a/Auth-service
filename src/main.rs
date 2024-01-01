@@ -1,12 +1,13 @@
 use std::env;
 use bcrypt::{DEFAULT_COST, hash};
 use dotenv::dotenv;
-use jsonwebtoken::{Algorithm, DecodingKey, encode, EncodingKey, Header};
+use jsonwebtoken::{Algorithm, decode, DecodingKey, encode, EncodingKey, Header, Validation};
 use redis::{Commands, RedisResult};
 use tonic::{Request, Response, Status, transport::Server};
 use authentication::{authentication_server::{Authentication, AuthenticationServer}, SignInRequest, SignInResponse, SignUpRequest, SignUpResponse};
 use database::redis_connection::redis_connect;
 use crate::authentication::{TokenValidationRequest, TokenValidationResponse};
+use crate::helpers::Claims;
 
 
 mod database;
@@ -24,8 +25,8 @@ pub mod authentication {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     dotenv().ok();
 
-    let port = env::var("PORT").unwrap_or_else(|_| String::from("3000"));
-    let address = format!("127.0.0.1:{}", port).parse().unwrap();
+    let port = env::var("PORT").unwrap_or_else(|_| String::from("5000"));
+    let address = format!("0.0.0.0:{}", port).parse().unwrap();
     let authentication_service = AuthenticationService::default();
 
     println!("Server listening on {}", address);
@@ -209,33 +210,37 @@ impl Authentication for AuthenticationService {
         let user = request.into_inner();
 
         // get the username and password from the request
-        let jwt = user.jwt;
+        let token = user.jwt;
 
         // Define the secret key
         dotenv().ok();
         let secret_key = env::var("JWT_SECRET_KEY").expect("JWT_SECRET_KEY must be set");
 
-        // Decode the JWT
-        let token_data = match jsonwebtoken::decode::<helpers::Claims>(&jwt, &DecodingKey::from_secret(secret_key.as_ref()), &jsonwebtoken::Validation::default()) {
-            Ok(token_data) => token_data,
-            Err(_) => return Err(Status::unauthenticated("Invalid JWT"))
-        };
+        // `token` is a struct with 2 fields: `header` and `claims` where `claims` is your own struct.
+        let token_data = decode::<Claims>(&token, &DecodingKey::from_secret(secret_key.as_ref()), &Validation::default());
 
-        // return a success response
-        let response = TokenValidationResponse {
-            success: true,
-            message: "JWT is valid".into(),
-            username: token_data.claims.username,
-            role: token_data.claims.role,
-        };
-        Ok(Response::new(response))
+        match token_data {
+            Ok(data) => {
+                // return a success response
+                let response = TokenValidationResponse {
+                    success: true,
+                    message: "JWT is valid".into(),
+                    username: data.claims.username,
+                    role: data.claims.role,
+                };
+                Ok(Response::new(response))
+            }
+            Err(_) => {
+                return Err(Status::unauthenticated("Invalid token"));
+            }
+        }
     }
 }
 
 impl AuthenticationService {
     fn return_jwt(username: String, role: String, secret_key: &String) -> Result<Response<SignInResponse>, Status> {
         // Create the claims
-        let claims = helpers::Claims {
+        let claims = Claims {
             username,
             role,
         };

@@ -1,4 +1,4 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 pub fn is_valid_user_role(role: &str) -> bool {
     match role {
@@ -18,11 +18,12 @@ pub(crate) fn is_valid_password(password: &str) -> bool {
 
 
 // Define the struct for the claims
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub(crate) struct Claims {
     pub(crate) username: String,
     pub(crate) role: String,
 }
+
 
 #[cfg(test)]
 mod tests {
