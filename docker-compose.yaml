@@ -9,12 +9,6 @@ services:
     volumes:
       - /data/data
     restart: always
-  auth_service:
-    build:
-      context: ./
-    ports:
-      - "50000:50000"
-    restart: always
 
   mysql_container:
     image: mysql:5.7
@@ -29,7 +23,12 @@ services:
       MYSQL_USER: authservice
       MYSQL_ROOT_PASSWORD: root
       MYSQL_PASSWORD: authservice
-
+  auth_service:
+    build:
+      context: ./
+    ports:
+      - "50000:50000"
+    restart: always
 volumes:
   auth_database:
 

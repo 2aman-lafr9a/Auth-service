@@ -117,8 +117,8 @@ impl Authentication for AuthenticationService {
 
         match result {
             Ok(_) => {}
-            Err(_) => {
-                print!("Failed to create user");
+            Err(error) => {
+                print!("Failed to create user{error}");
                 return Err(Status::internal("Failed to create user"));
             }
         }
@@ -131,7 +131,7 @@ impl Authentication for AuthenticationService {
         match result {
             Ok(_) => {}
             Err(error) => {
-                print!("Failed to create user {:?}", error);
+                println!("Failed to create user {error}");
                 return Err(Status::internal("Failed to create user"));
             }
         }
@@ -200,7 +200,10 @@ impl Authentication for AuthenticationService {
                             None => Err(Status::unauthenticated("Invalid credentials"))
                         };
                     }
-                    Err(_) => Err(Status::internal("Can't get a user"))
+                    Err(error) => {
+                        println!("Failed to get user {error}");
+                        Err(Status::internal("Can't get a user "))
+                    }
                 }
             }
         }
@@ -230,7 +233,8 @@ impl Authentication for AuthenticationService {
                 };
                 Ok(Response::new(response))
             }
-            Err(_) => {
+            Err(error) => {
+                println!("Failed to validate token {error}");
                 return Err(Status::unauthenticated("Invalid token"));
             }
         }

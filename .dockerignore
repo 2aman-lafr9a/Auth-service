@@ -1,0 +1,5 @@
+./target
+./tests
+./docker-compose.yaml
+./.dockerignore
+./Dockerfile

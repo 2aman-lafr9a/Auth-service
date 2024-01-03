@@ -1,10 +1,11 @@
+use std::env;
+
 pub(crate) fn redis_connect() -> redis::Connection {
-    let redis_host_name = "localhost:6379";
-    let redis_password = "";
+    let redis_url = env::var("REDIS_URL")
+        .expect("REDIS_URL must be set");
 
-    let redis_conn_url = format!("{}://:{}@{}", "redis", redis_password, redis_host_name);
 
-    let client = redis::Client::open(redis_conn_url)
+    let client = redis::Client::open(redis_url)
         .expect("Invalid connection URL");
 
     match client.get_connection() {
