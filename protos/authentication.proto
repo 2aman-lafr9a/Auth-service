@@ -24,6 +24,7 @@ message TokenValidationResponse {
   string message = 2;
   string username = 3;
   string role = 4;
+  string expiration = 5;
 }
 
 

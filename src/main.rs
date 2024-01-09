@@ -1,4 +1,5 @@
 use std::env;
+use std::time::{Duration, SystemTime};
 use bcrypt::{DEFAULT_COST, hash};
 use dotenv::dotenv;
 use jsonwebtoken::{Algorithm, decode, DecodingKey, encode, EncodingKey, Header, Validation};
@@ -230,6 +231,7 @@ impl Authentication for AuthenticationService {
                     message: "JWT is valid".into(),
                     username: data.claims.username,
                     role: data.claims.role,
+                    expiration: data.claims.exp.to_string(),
                 };
                 Ok(Response::new(response))
             }
@@ -243,10 +245,25 @@ impl Authentication for AuthenticationService {
 
 impl AuthenticationService {
     fn return_jwt(username: String, role: String, secret_key: &String) -> Result<Response<SignInResponse>, Status> {
+        let expiration = env::var("JWT_EXPIRATION")
+            .expect("JWT_EXPIRATION must be set")
+            .parse::<u64>()
+            .expect("JWT_EXPIRATION must be an integer");
+        // Get the current time
+        let current_time = SystemTime::now();
+        // Add the expiration time to the current time
+        let duration_to_add = Duration::from_secs(expiration);
+        // Convert the current time to a usize
+        let exp = (current_time + duration_to_add)
+            .duration_since(SystemTime::UNIX_EPOCH)
+            .expect("Failed to get UNIX_EPOCH")
+            .as_secs() as usize;
+
         // Create the claims
         let claims = Claims {
             username,
             role,
+            exp,
         };
 
         let token = encode(&Header::new(Algorithm::HS256), &claims, &EncodingKey::from_secret(secret_key.as_ref()))

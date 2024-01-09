@@ -22,6 +22,7 @@ pub(crate) fn is_valid_password(password: &str) -> bool {
 pub(crate) struct Claims {
     pub(crate) username: String,
     pub(crate) role: String,
+    pub(crate) exp: usize,
 }
 
 
