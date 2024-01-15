@@ -31,7 +31,7 @@ services:
     restart: always
     networks:
       - aman_network
-    hostname: auth_service
+    hostname: authentication_service
 volumes:
   auth_database:
 networks:
