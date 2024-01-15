@@ -31,5 +31,9 @@ services:
     restart: always
 volumes:
   auth_database:
+networks:
+  bridge:
+    external: true
+    name: 2aman_network
 
 
