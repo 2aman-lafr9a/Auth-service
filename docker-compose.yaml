@@ -29,11 +29,13 @@ services:
     ports:
       - "50000:50000"
     restart: always
+    networks:
+      - aman_network
 volumes:
   auth_database:
 networks:
-  bridge:
+  aman_network:
+    driver: bridge
     external: true
-    name: 2aman_network
 
 
