@@ -1,6 +1,5 @@
 1. **Auth service:**
     
-    ![Gateway.jpg](https://prod-files-secure.s3.us-west-2.amazonaws.com/d58fba49-c822-442d-828c-9fa4b83f167a/9b0e57ce-dc8e-483e-93e0-3ce19ae8874c/Gateway.jpg)
     
 
 This microserver is responsible for JWT authentication, and role-based authorization, it is written with a low level language and a fast language **RUST** (Rust is a multi-paradigm, general-purpose programming language that emphasizes performance, type safety, and concurrency. It enforces memory safety, meaning that all references point to valid memory, without requiring the use of automated memory management techniques, such as garbage collector) 
