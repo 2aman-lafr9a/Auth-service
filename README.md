@@ -1,17 +1,18 @@
-```shell
+1. **Auth service:**
+    
+    ![Gateway.jpg](https://prod-files-secure.s3.us-west-2.amazonaws.com/d58fba49-c822-442d-828c-9fa4b83f167a/9b0e57ce-dc8e-483e-93e0-3ce19ae8874c/Gateway.jpg)
+    
 
-docker build -t auth-service .
-docker run  -d auth-service
+This microserver is responsible for JWT authentication, and role-based authorization, it is written with a low level language and a fast language **RUST** (Rust is a multi-paradigm, general-purpose programming language that emphasizes performance, type safety, and concurrency. It enforces memory safety, meaning that all references point to valid memory, without requiring the use of automated memory management techniques, such as garbage collector) 
+
+[https://en.wikipedia.org/wiki/Rust_(programming_language)](https://en.wikipedia.org/wiki/Rust_(programming_language))
+
+It uses a MySql database ( Relational database ) as  a primary database to store its data, and redis to cache the user data so the access to db will be fast, and it provides a GRPC interface to deal with it, it’s dumps and all that it knows is AUTH only, the methods it provides are 
+
+```protobuf
+rpc SignUp(SignUpRequest) returns (SignUpResponse);
+rpc SignIn(SignInRequest) returns (SignInResponse);
+rpc validateToken(TokenValidationRequest) returns (TokenValidationResponse);
 ```
 
-```shell
-docker compose up -d
-```
-
-**[//]: # (sudo apt install gcc-multilib)**
-
-build proto files
-
-```shell
-sudo apt install protobuf-codegen
-```
+what makes this microservice essential and special, it’s stateless, reusable, and central, but it’s too crucial because it’s a point of failure, and it’s used by the API gateway to validate authorizations and make sure that all routes are protected, and it hides the details of auth from any other microservers so devs can focus only on the business logic of their microservices.
