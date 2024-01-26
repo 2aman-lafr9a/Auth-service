@@ -3,16 +3,16 @@ version: '3'
 services:
   redis_container:
     image: redis/redis-stack-server:latest
-    container_name: redis_container
     ports:
       - "6379:6379"
     volumes:
       - /data/data
     restart: always
+    networks:
+      - auth_network
 
   mysql_container:
     image: mysql:5.7
-    container_name: mysql_container
     ports:
       - "3306:3306"
     volumes:
@@ -23,6 +23,8 @@ services:
       MYSQL_USER: authservice
       MYSQL_ROOT_PASSWORD: root
       MYSQL_PASSWORD: authservice
+    networks:
+      - auth_network
   auth_service:
     build:
       context: ./
@@ -31,6 +33,7 @@ services:
     restart: always
     networks:
       - aman_network
+      - auth_network
     hostname: authentication_service
 volumes:
   auth_database:
@@ -38,5 +41,8 @@ networks:
   aman_network:
     driver: bridge
     external: true
+  auth_network:
+    driver: bridge
+    internal: true
 
 
