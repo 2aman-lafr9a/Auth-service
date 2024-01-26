@@ -3,7 +3,7 @@ version: '3'
 services:
   redis_container:
     image: redis/redis-stack-server:latest
-    container_name: redis
+    container_name: redis_container
     ports:
       - "6379:6379"
     volumes:
@@ -12,7 +12,7 @@ services:
 
   mysql_container:
     image: mysql:5.7
-    container_name: mysql
+    container_name: mysql_container
     ports:
       - "3306:3306"
     volumes:
@@ -31,6 +31,8 @@ services:
     restart: always
     networks:
       - aman_network
+      - redis_container
+      - mysql_container
     hostname: authentication_service
 volumes:
   auth_database:
