@@ -31,8 +31,6 @@ services:
     restart: always
     networks:
       - aman_network
-      - redis_container
-      - mysql_container
     hostname: authentication_service
 volumes:
   auth_database:
